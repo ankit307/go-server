@@ -7,14 +7,16 @@ import (
 	"net/http"
 )
 
-type Profile struct {
+type User struct {
 	Name    string
 	Hobbies []string
+	Email   string
+	Phone   int
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	profile := Profile{"Alex", []string{"snowboarding", "programming"}}
-	responseSender(w, profile)
+	user := User{"Alex", []string{"snowboarding", "programming"}, "alex@gmail.com", 123456}
+	responseSender(w, user)
 }
 
 func loggingHandler(nextHandler http.Handler) http.Handler {
@@ -39,7 +41,7 @@ func responseSender(w http.ResponseWriter, data interface{}) {
 
 func main() {
 	mux := http.NewServeMux()
-	mux.Handle("/", loggingHandler(http.HandlerFunc(rootHandler)))
+	mux.Handle("/user", loggingHandler(http.HandlerFunc(rootHandler)))
 	fmt.Println("===============================================================================")
 	fmt.Println("=========================SERVER STARTED========================================")
 	fmt.Println("===============================================================================")
