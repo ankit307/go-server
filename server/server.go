@@ -16,7 +16,7 @@ type User struct {
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	user := User{"Alex", []string{"snowboarding", "programming"}, "alex@gmail.com", 123456}
-	responseSender(w, user)
+	respondWithJSON(w, http.StatusOK, user)
 }
 
 func loggingHandler(nextHandler http.Handler) http.Handler {
@@ -28,15 +28,15 @@ func loggingHandler(nextHandler http.Handler) http.Handler {
 	})
 }
 
-func responseSender(w http.ResponseWriter, data interface{}) {
-	js, err := json.Marshal(data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	fmt.Println(string(js))
+func respondWithError(w http.ResponseWriter, code int, message string) {
+	respondWithJSON(w, code, map[string]string{"error": message})
+}
+
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, _ := json.Marshal(payload)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+	w.WriteHeader(code)
+	w.Write(response)
 }
 
 func main() {
