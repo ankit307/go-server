@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type User struct {
@@ -39,12 +42,21 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
+// init is invoked before main()
+func init() {
+	// loads values from .env into the system
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
+}
+
 func main() {
 	mux := http.NewServeMux()
+	port, _ := os.LookupEnv("PORT")
 	mux.Handle("/user", loggingHandler(http.HandlerFunc(rootHandler)))
 	fmt.Println("===============================================================================")
-	fmt.Println("=========================SERVER STARTED========================================")
+	fmt.Printf("=========================SERVER STARTED AT PORT %s==========================\n", port)
 	fmt.Println("===============================================================================")
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Fatal(http.ListenAndServe(port, mux))
 
 }
