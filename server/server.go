@@ -1,12 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 )
 
@@ -50,13 +52,26 @@ func init() {
 	}
 }
 
+func connect() {
+	URL, _ := os.LookupEnv("CONNECTION_URL")
+	db, err := sql.Open("mysql", URL)
+	// if there is an error opening the connection, handle it
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Print("============= CONNECTED TO DB: " + URL + " =================")
+	// defer the close till after the main function has finished
+	// executing
+	defer db.Close()
+}
+
 func main() {
 	mux := http.NewServeMux()
 	port, _ := os.LookupEnv("PORT")
+	connect()
 	mux.Handle("/user", loggingHandler(http.HandlerFunc(rootHandler)))
 	log.Print("===============================================================================")
 	log.Print("=========================SERVER STARTED AT PORT " + port + "==========================")
 	log.Print("===============================================================================")
 	log.Fatal(http.ListenAndServe(port, mux))
-
 }
