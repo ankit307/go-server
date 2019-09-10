@@ -54,9 +54,9 @@ func main() {
 	mux := http.NewServeMux()
 	port, _ := os.LookupEnv("PORT")
 	mux.Handle("/user", loggingHandler(http.HandlerFunc(rootHandler)))
-	fmt.Println("===============================================================================")
-	fmt.Printf("=========================SERVER STARTED AT PORT %s==========================\n", port)
-	fmt.Println("===============================================================================")
+	log.Print("===============================================================================")
+	log.Print("=========================SERVER STARTED AT PORT " + port + "==========================")
+	log.Print("===============================================================================")
 	log.Fatal(http.ListenAndServe(port, mux))
 
 }
