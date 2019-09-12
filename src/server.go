@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"dbconfig"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+//User data struct for mapping user fields
 type User struct {
 	Name    string
 	Hobbies []string
@@ -68,7 +70,7 @@ func connect() {
 func main() {
 	mux := http.NewServeMux()
 	port, _ := os.LookupEnv("PORT")
-	connect()
+	dbconfig.Connect()
 	mux.Handle("/user", loggingHandler(http.HandlerFunc(rootHandler)))
 	log.Print("===============================================================================")
 	log.Print("=========================SERVER STARTED AT PORT " + port + "==========================")
